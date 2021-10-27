@@ -1,4 +1,4 @@
-﻿___INFO___
+___INFO___
 
 {
   "type": "CLIENT",
@@ -45,6 +45,7 @@ const setResponseHeader = require('setResponseHeader');
 const setResponseStatus = require('setResponseStatus');
 const setCookie = require('setCookie');
 const computeEffectiveTldPlusOne = require('computeEffectiveTldPlusOne');
+const getCookieValues = require('getCookieValues');
 
 const proxyResponse = (response, headers, statusCode, origin, cookieDomain) => {
 	setResponseStatus(statusCode);
@@ -58,13 +59,12 @@ const proxyResponse = (response, headers, statusCode, origin, cookieDomain) => {
 		if (key == 'set-cookie') {
 			logToConsole('setting newCookieValue...');
 			var demdexCookie = headers[key][0];
-			logToConsole(demdexCookie);
+			// logToConsole(demdexCookie);
 			var demdexCookieValue = getDemdexCookieValue(demdexCookie);
-			logToConsole(demdexCookieValue);
-			setCookie('testdemdex', demdexCookieValue, {'max-age': 15552000, 'domain': cookieDomain, 'path': '/'});
+			// logToConsole(demdexCookieValue);
+			setCookie('demdex', demdexCookieValue, {'max-age': 15552000, 'domain': cookieDomain, 'path': '/'});
 		} else {
 			setResponseHeader(key, headers[key]);
-			logToConsole(headers[key]);
 		}
 	}
 	returnResponse();
@@ -88,21 +88,27 @@ const removeGetParameter = (queryString, parameterName) => {
 
 if(getRequestPath() == '/id' && getRequestQueryParameter('d_orgid') == data.organizationId) {
 	claimRequest();
-    logToConsole('Hello world!');
     var queryString;
     var origin = getRequestHeader('origin');
     var cookieDomain = '.' + computeEffectiveTldPlusOne(origin);
-    logToConsole(cookieDomain);
     if (getRequestQueryParameter('d_coppa')) {
       queryString = removeGetParameter(getRequestQueryString(), 'd_coppa');
     } else {
       queryString = getRequestQueryString();
     }
     var demdexRequestUrl = 'https://dpm.demdex.net/id?' + queryString;
-    logToConsole(demdexRequestUrl);
-    sendHttpGet(demdexRequestUrl, (statusCode, headers, body) => {
-		proxyResponse(body, headers, statusCode, origin, cookieDomain);
-    }, {timeout: 5000}); 
+    // checking if demdex cookie is in incoming request header
+    if (getCookieValues('demdex') && getCookieValues('demdex')[0]) {
+      // taking the current demdex cookie value and sending it to the demdex.net
+      var currentDemdexCookieValue = 'demdex=' + getCookieValues('demdex')[0];
+      sendHttpGet(demdexRequestUrl, (statusCode, headers, body) => {
+        proxyResponse(body, headers, statusCode, origin, cookieDomain);
+      }, {headers: {'Cookie': currentDemdexCookieValue}, timeout: 500});
+    } else {
+      sendHttpGet(demdexRequestUrl, (statusCode, headers, body) => {
+	    proxyResponse(body, headers, statusCode, origin, cookieDomain);
+      }, {timeout: 5000});
+    }
 }
 
 
@@ -263,7 +269,7 @@ ___SERVER_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "testdemdex"
+                    "string": "demdex"
                   },
                   {
                     "type": 1,
@@ -292,6 +298,39 @@ ___SERVER_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_cookies",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "cookieAccess",
+          "value": {
+            "type": 1,
+            "string": "specific"
+          }
+        },
+        {
+          "key": "cookieNames",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "demdex"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
@@ -303,6 +342,4 @@ scenarios: []
 
 ___NOTES___
 
-Created on 9/4/2021, 12:32:37 PM
-
-
+Created on 10/27/2021, 4:19:23 PM
