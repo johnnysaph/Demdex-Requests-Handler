@@ -1,4 +1,4 @@
-Demdex Client is a GTM server-side client designed to capture and handle requests which Adobe Analytics VisitorAPI.js makes to the dmp.demdex.net domain.
+Demdex Requests Handler is a GTM server-side client designed to capture and handle requests which Adobe Analytics VisitorAPI.js makes to the dmp.demdex.net domain.
 The main purpose for the client is to set demdex cookie in the first party context to avoid ITP in Safari browsers.
 
 Adobe Analytics data collection server (dmp.demdex.net) uses demdex cookie value and organization ID to generate AMCV cookie. AMVC cookie contains the Experience Cloud visitor ID or MID which is used as a visitor id in Adobe Analytics reports.
