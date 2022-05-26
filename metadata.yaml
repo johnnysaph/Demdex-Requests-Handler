@@ -1,0 +1,6 @@
+homepage: "https://github.com/johnnysaph"
+documentation: "https://github.com/johnnysaph/Demdex-Requests-Handler/blob/main/README.md"
+versions:
+	
+  - sha: 73da1f4f10e2a834b622c98bf1f7c4633589706e
+    changeNotes: Initial release.
