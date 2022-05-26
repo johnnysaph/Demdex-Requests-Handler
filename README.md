@@ -3,7 +3,7 @@ The main purpose for the client is to set demdex cookie in the first party conte
 
 Adobe Analytics data collection server (dmp.demdex.net) uses demdex cookie value and organization ID to generate AMCV cookie. AMVC cookie contains the Experience Cloud visitor ID or MID which is used as a visitor id in Adobe Analytics reports.
 
-Demdex Client works in a pretty simple way:
+Demdex Requests Handler works in a pretty simple way:
 
 1) captures request and redirects it to the dmp.demdex.net
 2) captures response from the dmp.demdex.net with set demdex cookie header
