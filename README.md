@@ -9,5 +9,5 @@ Demdex Client works in a pretty simple way:
 2) captures response from the dmp.demdex.net with set demdex cookie header
 3) changes domain attribute in the set demdex cookie header to the first party domain
 4) returns the response back to browser
-5) 
+
 With such approach demdex cookie is a http cookie and set in the first party context which means that it is not rejected in Safari browsers.
